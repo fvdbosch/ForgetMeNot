@@ -2,8 +2,10 @@ sitemap demo label="Main Menu"
 {
 	Frame label="EnOcean" {
 		Switch item=EnOcean_switch_00298B1A label="Switch"
-		Text item=EnOcean_sensor_01809DC1 valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"] {
+		Text item=Average_temperature {
 			Frame {
+				Text item=EnOcean_sensor_01809DC1 valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
+				Text item=EnOcean_sensor_0181A67A valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
 				Switch item=Temperature_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
 				Chart item=Temperature_Chart period=h refresh=600 visibility=[Temperature_Chart_Period==0, Temperature_Chart_Period=="Uninitialized"]
 				Chart item=Temperature_Chart period=D refresh=3600 visibility=[Temperature_Chart_Period==1]
@@ -21,12 +23,12 @@ sitemap demo label="Main Menu"
 	}
 	
 	Frame label="Cats" {
-		Text label="Spot" {
+		Text item=Spot {
 			Frame {
 				Text label="Spot"
 			}
 		}
-		Text label="Tijger" {
+		Text item=Tijger {
 			Frame {
 				Text label="Tijger"
 			}

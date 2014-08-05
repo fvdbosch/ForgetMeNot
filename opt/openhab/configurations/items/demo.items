@@ -1,14 +1,21 @@
-//EnOcean Bindings
+// EnOcean Bindings
 Switch EnOcean_switch_00298B1A {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=B}"}
-Number EnOcean_sensor_01809DC1 "Office [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:80:9D:C1, eep=A5:02:05, parameter=TEMPERATURE}"}
-Number EnOcean_sensor_0181A67A "Veranda [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:81:A6:7A, eep=A5:02:05, parameter=TEMPERATURE}"}
 Contact EnOcean_sensor_0180878B "Contact [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE"}
 
-//Exec Bindings
+// Exec Bindings
 Switch Elro_socket_C1 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 1 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 1 0]"}
 Switch Elro_socket_C2 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 2 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 2 0]"}
 Switch Elro_socket_C3 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 3 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 3 0]"}
 Switch Elro_socket_C4 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 4 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 4 0]"}
 
+// Temperature
+Number Average_temperature "Average Temperature [%.1f °C]" <temperature>
+Number EnOcean_sensor_01809DC1 "Office [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:80:9D:C1, eep=A5:02:05, parameter=TEMPERATURE}"}
+Number EnOcean_sensor_0181A67A "Veranda [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:81:A6:7A, eep=A5:02:05, parameter=TEMPERATURE}"}
 Group Temperature_Chart
 Number Temperature_Chart_Period	"Chart Period"
+
+// Cats
+Group Spot "Spot" <catblack>
+Group Tijger "Tijger" <catbrown>
+
