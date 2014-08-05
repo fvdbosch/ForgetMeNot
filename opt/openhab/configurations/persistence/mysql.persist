@@ -1,0 +1,7 @@
+Strategies {
+    default = everyChange
+}
+
+Items {
+    * : strategy = default, restoreOnStartup
+}

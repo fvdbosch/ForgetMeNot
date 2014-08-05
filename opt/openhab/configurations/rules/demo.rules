@@ -1,0 +1,45 @@
+rule "Switch"
+when 
+    Item EnOcean_switch_00298B1A received update 
+then
+    
+    logInfo("Switch","Received Commando")        
+end
+
+rule "Temprature"
+when 
+    Item EnOcean_sensor_01809DC1 received update 
+then
+    
+    logInfo("Temperature","Received Commando")        
+end
+
+rule "Contact"
+when 
+    Item EnOcean_sensor_0180878B received update 
+then
+    
+    logInfo("Contact","Received Commando")        
+end
+
+rule "Master-OFF"
+when 
+    Item EnOcean_switch_00298B1A changed to OFF
+then
+    
+    Elro_socket_C1.send(OFF)   
+    Elro_socket_C2.send(OFF)
+    Elro_socket_C3.send(OFF)
+    Elro_socket_C4.send(OFF)    
+end
+
+rule "Master-ON"
+when 
+    Item EnOcean_switch_00298B1A changed to ON
+then
+    
+    Elro_socket_C1.send(ON)
+    Elro_socket_C2.send(ON)  
+    Elro_socket_C3.send(ON)  
+    Elro_socket_C4.send(ON)         
+end
