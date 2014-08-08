@@ -19,3 +19,9 @@ Number Temperature_Chart_Period	"Chart Period"
 Group Spot "Spot" <catblack>
 Group Tijger "Tijger" <catbrown>
 
+// Dispenser
+Group Dispenser <pie>
+Group Dispenser_Chart <pie>
+Number Dispenser_Chart_Period	"Chart Period"
+Number Food "Food [%d %%]" <pie> (Dispenser_Chart)
+Number Water "Water [%d %%]" <pie> (Dispenser_Chart)

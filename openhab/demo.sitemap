@@ -7,8 +7,8 @@ sitemap demo label="Main Menu"
 				Text item=EnOcean_sensor_01809DC1 valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
 				Text item=EnOcean_sensor_0181A67A valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
 				Switch item=Temperature_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
-				Chart item=Temperature_Chart period=h refresh=600 visibility=[Temperature_Chart_Period==0, Temperature_Chart_Period=="Uninitialized"]
-				Chart item=Temperature_Chart period=D refresh=3600 visibility=[Temperature_Chart_Period==1]
+				Chart item=Temperature_Chart period=h refresh=300 visibility=[Temperature_Chart_Period==0, Temperature_Chart_Period=="Uninitialized"]
+				Chart item=Temperature_Chart period=D refresh=1800 visibility=[Temperature_Chart_Period==1]
 				Chart item=Temperature_Chart period=W refresh=3600 visibility=[Temperature_Chart_Period==2]
 			}
 		}
@@ -33,5 +33,22 @@ sitemap demo label="Main Menu"
 				Text label="Tijger"
 			}
 		}
+		Text item=Dispenser {
+			Frame {
+				Text item=Food valuecolor=[>50="green",>25="orange",<=25="red"]
+				Text item=Water valuecolor=[>50="green",>25="orange",<=25="red"]
+				Switch item=Dispenser_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+				Chart item=Dispenser_Chart period=h refresh=600 visibility=[Dispenser_Chart_Period==0, Dispenser_Chart_Period=="Uninitialized"]
+				Chart item=Dispenser_Chart period=D refresh=3600 visibility=[Dispenser_Chart_Period==1]
+				Chart item=Dispenser_Chart period=W refresh=3600 visibility=[Dispenser_Chart_Period==2]
+			}
+		}
+		Text item=Camera {
+			Frame {
+				Video url="http://localhost:8081" encoding="mjpeg"
+			}
+		}
 	}
+	
+	
 }
