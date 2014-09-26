@@ -1,6 +1,10 @@
 // EnOcean Bindings
-Switch EnOcean_switch_00298B1A {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=B}"}
-Contact EnOcean_sensor_0180878B "Contact [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE"}
+Switch EnOcean_switch_00298B1AA {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=A}"}
+Switch EnOcean_switch_00298B1AB {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=B}"}
+Switch EnOcean_switch_00294B6FA {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=A}"}
+Switch EnOcean_switch_00294B6FB {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=B}"}
+Contact EnOcean_sensor_0180878B "Veranda door [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE}"}
+Contact EnOcean_sensor_0180FC58 "Veranda window [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:FC:58, eep=D5:00:01, parameter=CONTACT_STATE}"}
 
 // Exec Bindings
 Switch Elro_socket_C1 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 1 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 1 0]"}
@@ -20,8 +24,24 @@ Group Spot "Spot" <catblack>
 Group Tijger "Tijger" <catbrown>
 
 // Dispenser
-Group Dispenser <pie>
-Group Dispenser_Chart <pie>
+Group Dispenser <bowl>
+Group Dispenser_Chart <bowl>
 Number Dispenser_Chart_Period	"Chart Period"
-Number Food "Food [%d %%]" <pie> (Dispenser_Chart)
-Number Water "Water [%d %%]" <pie> (Dispenser_Chart)
+Number Arduino_weightFood "Food quantity [%.1f gr]" <bowl> (Dispenser_Chart)
+Number Arduino_weightWater "Water quantity [%.1f gr]" <bowl> (Dispenser_Chart)
+//Number DS18B20_temperature_280004314f8aff "Water temperature [%.1f °C]" <temperature> (Dispenser_Chart) {exec="<[/home/pi/temp.py 28-0004314f8aff:5000:REGEX((.*?))]"}
+
+//Arduino
+String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
+String Arduino_RFID1 "Currently eating [MAP(rfid.map):%s]"
+String Arduino_RFID2 "Currently drinking [MAP(rfid.map):%s]"
+
+String History <chart>
+Switch camera_light "Video lighting" <video>
+
+Number FoodIntakeSpot "Daily food intake [%d %%]" <bowl>
+Number WaterIntakeSpot "Daily water intake [%d %%]" <bowl>
+String HistorySpot "History" <chart>
+Number FoodIntakeTijger "Daily food intake [%d %%]" <bowl>
+Number WaterIntakeTijger "Daily water intake [%d %%]" <bowl>
+String HistoryTijger "History" <chart>

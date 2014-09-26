@@ -1,10 +1,18 @@
 import org.openhab.core.library.types.*
 
+//rule "System Start"  
+//when  
+//    System started  
+//then  
+//	var state = EnOcean_switch_00298B1AB.historicState(now,mysql) as OnOffType
+//	EnOcean_switch_00298B1AB.setState(state)
+//end
+
 rule "Master switch"
 when 
-	Item EnOcean_switch_00298B1A changed
+	Item EnOcean_switch_00298B1AA changed
 then
-	var state = EnOcean_switch_00298B1A.state as OnOffType
+	var state = EnOcean_switch_00298B1AA.state as OnOffType
 	
     Elro_socket_C1.send(state)
     Elro_socket_C2.send(state)  
@@ -22,4 +30,55 @@ then
 	var average_temp = (temp1.floatValue + temp2.floatValue) / 2
 	
 	postUpdate(Average_temperature, average_temp)
+end
+
+rule "Arduino"
+	when 
+		Item Arduino received update
+	then
+	    var String ArduinoUpdate = Arduino.state.toString.trim 
+	    
+	    var int rfid1StartsOn = ArduinoUpdate.indexOf("-B1-RFID1:") + "-B1-RFID1:".length
+	    var String reading1 = ArduinoUpdate.mid(rfid1StartsOn, ArduinoUpdate.indexOf('-E1-')-rfid1StartsOn)
+	    
+	    var int rfid2StartsOn = ArduinoUpdate.indexOf("-B2-RFID2:") + "-B2-RFID2:".length
+	    var String reading2 = ArduinoUpdate.mid(rfid2StartsOn, ArduinoUpdate.indexOf('-E2-')-rfid2StartsOn)
+	    
+	    //if(reading1 == "E3468DF4") {
+	    //	reading1 = "Tijger"
+	    //} else if(reading1 == "737193F4") {
+	    //	reading1 = "Spot"
+	    //} else {
+	    //	reading1 = "-"
+	    //}
+	    
+	    //if(reading2 == "E3468DF4") {
+	    //	reading2 = "Tijger"
+	    //} else if(reading2 == "737193F4") {
+	    //	reading2 = "Spot"
+	    //} else {
+	    //	reading2 = "-"
+	    //}
+	    
+	    Arduino_RFID1.postUpdate(reading1)
+	    Arduino_RFID2.postUpdate(reading2)
+end
+
+rule "Video Light"
+	when 
+		Item camera_light changed
+	then
+	    var state = camera_light.state as OnOffType
+	    
+	    sendCommand (Arduino , "light=" + state)
+end
+
+rule "Reset cat intake"
+	when 
+		Time cron "0 0 0 * * ?"
+	then
+	    FoodIntakeSpot.postUpdate(0)
+	    WaterIntakeSpot.postUpdate(0)
+	    FoodIntakeTijger.postUpdate(0)
+	    WaterIntakeTijger.postUpdate(0)
 end

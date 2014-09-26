@@ -1,54 +1,79 @@
 sitemap demo label="Main Menu"
-{
-	Frame label="EnOcean" {
-		Switch item=EnOcean_switch_00298B1A label="Switch"
-		Text item=Average_temperature {
-			Frame {
-				Text item=EnOcean_sensor_01809DC1 valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
-				Text item=EnOcean_sensor_0181A67A valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
-				Switch item=Temperature_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
-				Chart item=Temperature_Chart period=h refresh=300 visibility=[Temperature_Chart_Period==0, Temperature_Chart_Period=="Uninitialized"]
-				Chart item=Temperature_Chart period=D refresh=1800 visibility=[Temperature_Chart_Period==1]
-				Chart item=Temperature_Chart period=W refresh=3600 visibility=[Temperature_Chart_Period==2]
-			}
-		}
-		Text item=EnOcean_sensor_0180878B
-	}
-
-	Frame label="Elro" {
-		Switch item=Elro_socket_C1 label="Kitchen"
-		Switch item=Elro_socket_C2 label="Living Room"
-		Switch item=Elro_socket_C3 label="Office"
-		Switch item=Elro_socket_C4 label="Bedroom"
-	}
+{	
+//	Frame label="EnOcean" {
+//		Switch item=EnOcean_switch_00298B1AA label="Switch 1 A"
+//		Switch item=EnOcean_switch_00298B1AB label="Switch 1 B"
+//		Switch item=EnOcean_switch_00294B6FA label="Switch 2 A"
+//		Switch item=EnOcean_switch_00294B6FB label="Switch 2 B"
+//		Text item=Average_temperature {
+//			Frame {
+//				Text item=EnOcean_sensor_01809DC1 valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
+//				Text item=EnOcean_sensor_0181A67A valuecolor=[>25="orange",>15="green",>5="orange",<=5="blue"]
+//				Switch item=Temperature_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+//				Chart item=Temperature_Chart period=h refresh=300 visibility=[Temperature_Chart_Period==0, Temperature_Chart_Period=="Uninitialized"]
+//				Chart item=Temperature_Chart period=D refresh=1800 visibility=[Temperature_Chart_Period==1]
+//				Chart item=Temperature_Chart period=W refresh=3600 visibility=[Temperature_Chart_Period==2]
+//			}
+//		}
+//		Text item=EnOcean_sensor_0180878B
+//		Text item=EnOcean_sensor_0180FC58
+//	}
+//
+//	Frame label="Elro" {
+//		Switch item=Elro_socket_C1 label="Kitchen"
+//		Switch item=Elro_socket_C2 label="Living Room"
+//		Switch item=Elro_socket_C3 label="Office"
+//		Switch item=Elro_socket_C4 label="Bedroom"
+//	}
 	
 	Frame label="Cats" {
+		Text item=Dispenser {
+			Frame {
+				Text item=Arduino_weightFood valuecolor=[>=10="green",<10="red"]
+				Text item=Arduino_weightWater valuecolor=[>=10="green",<10="red"]
+				//Text item=DS18B20_temperature_280004314f8aff valuecolor=[>25="red",>=10="green",<10="red"]
+				Text item=Arduino_RFID1
+				Text item=Arduino_RFID2
+				Switch item=camera_light
+				Video url="http://localhost:8081" encoding="mjpeg"
+				Text item=History {
+					Frame {
+						Switch item=Dispenser_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Dispenser_Chart period=h refresh=600 visibility=[Dispenser_Chart_Period==0, Dispenser_Chart_Period=="Uninitialized"]
+						Chart item=Dispenser_Chart period=D refresh=3600 visibility=[Dispenser_Chart_Period==1]
+						Chart item=Dispenser_Chart period=W refresh=3600 visibility=[Dispenser_Chart_Period==2]
+					}
+				}
+				
+			}
+		}
 		Text item=Spot {
 			Frame {
-				Text label="Spot"
+					Text item=FoodIntakeSpot valuecolor=[>100="red",>=80="green",>=0="orange"]
+					Text item=WaterIntakeSpot
+					Text item=HistorySpot {
+					Frame {
+						Switch item=Dispenser_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Dispenser_Chart period=h refresh=600 visibility=[Dispenser_Chart_Period==0, Dispenser_Chart_Period=="Uninitialized"]
+						Chart item=Dispenser_Chart period=D refresh=3600 visibility=[Dispenser_Chart_Period==1]
+						Chart item=Dispenser_Chart period=W refresh=3600 visibility=[Dispenser_Chart_Period==2]
+					}
+				}
 			}
 		}
 		Text item=Tijger {
 			Frame {
-				Text label="Tijger"
-			}
-		}
-		Text item=Dispenser {
-			Frame {
-				Text item=Food valuecolor=[>50="green",>25="orange",<=25="red"]
-				Text item=Water valuecolor=[>50="green",>25="orange",<=25="red"]
-				Switch item=Dispenser_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
-				Chart item=Dispenser_Chart period=h refresh=600 visibility=[Dispenser_Chart_Period==0, Dispenser_Chart_Period=="Uninitialized"]
-				Chart item=Dispenser_Chart period=D refresh=3600 visibility=[Dispenser_Chart_Period==1]
-				Chart item=Dispenser_Chart period=W refresh=3600 visibility=[Dispenser_Chart_Period==2]
-			}
-		}
-		Text item=Camera {
-			Frame {
-				Video url="http://localhost:8081" encoding="mjpeg"
+					Text item=FoodIntakeTijger valuecolor=[>100="red",>=80="green",>=0="orange"]
+					Text item=WaterIntakeTijger
+					Text item=HistoryTijger {
+					Frame {
+						Switch item=Dispenser_Chart_Period label="Chart Period" mappings=[0="Hour", 1="Day", 2="Week"]
+						Chart item=Dispenser_Chart period=h refresh=600 visibility=[Dispenser_Chart_Period==0, Dispenser_Chart_Period=="Uninitialized"]
+						Chart item=Dispenser_Chart period=D refresh=3600 visibility=[Dispenser_Chart_Period==1]
+						Chart item=Dispenser_Chart period=W refresh=3600 visibility=[Dispenser_Chart_Period==2]
+					}
+				}
 			}
 		}
 	}
-	
-	
 }
