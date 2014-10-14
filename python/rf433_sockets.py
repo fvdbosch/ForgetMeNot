@@ -13,4 +13,3 @@ on = int(sys.argv[3])
 bus.write_byte(address, house)  
 bus.write_byte(address, unit)  
 bus.write_byte(address, on)
-

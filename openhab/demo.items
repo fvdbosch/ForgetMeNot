@@ -1,19 +1,25 @@
+//Group MasterSwitch
+Group Switches <switch>
+
+Group:Contact:OR(OPEN, CLOSED) Contacts "Open windows and doors [(%d)]" <contact> (All)
+Group:Switch:OR(ON, OFF) Sockets "Enabled power sockets [(%d)]" <socket> (All)
+
 // EnOcean Bindings
-Switch EnOcean_switch_00298B1AA {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=A}"}
-Switch EnOcean_switch_00298B1AB {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=B}"}
-Switch EnOcean_switch_00294B6FA {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=A}"}
-Switch EnOcean_switch_00294B6FB {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=B}"}
-Contact EnOcean_sensor_0180878B "Veranda door [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE}"}
-Contact EnOcean_sensor_0180FC58 "Veranda window [MAP(en.map):%s]" <contact> (enocean) {enocean="{id=01:80:FC:58, eep=D5:00:01, parameter=CONTACT_STATE}"}
+Switch EnOcean_switch_00298B1AA "Master switch" <socket> (Switches) {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=A}"}
+Switch EnOcean_switch_00298B1AB "Maintenance mode" <siren> (Switches) {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=B}"}
+Switch EnOcean_switch_00294B6FA (Switches) {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=A}"}
+Switch EnOcean_switch_00294B6FB (Switches) {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=B}"}
+Contact EnOcean_sensor_0180878B "Veranda door [MAP(en.map):%s]" <door> (Contacts) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE}"}
+Contact EnOcean_sensor_0180FC58 "Veranda window [MAP(en.map):%s]" <contact> (Contacts) {enocean="{id=01:80:FC:58, eep=D5:00:01, parameter=CONTACT_STATE}"}
 
 // Exec Bindings
-Switch Elro_socket_C1 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 1 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 1 0]"}
-Switch Elro_socket_C2 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 2 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 2 0]"}
-Switch Elro_socket_C3 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 3 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 3 0]"}
-Switch Elro_socket_C4 "Exec" {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 4 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 4 0]"}
+Switch Elro_socket_C1 "Kitchen" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 1 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 1 0]"}
+Switch Elro_socket_C2 "Living room" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 2 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 2 0]"}
+Switch Elro_socket_C3 "Office" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 3 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 3 0]"}
+Switch Elro_socket_C4 "Bedroom" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 4 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 4 0]"}
 
 // Temperature
-Number Average_temperature "Average Temperature [%.1f °C]" <temperature>
+Number Average_temperature "Average room temperature [%.1f °C]" <temperature>
 Number EnOcean_sensor_01809DC1 "Office [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:80:9D:C1, eep=A5:02:05, parameter=TEMPERATURE}"}
 Number EnOcean_sensor_0181A67A "Veranda [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:81:A6:7A, eep=A5:02:05, parameter=TEMPERATURE}"}
 Group Temperature_Chart
@@ -27,9 +33,9 @@ Group Tijger "Tijger" <catbrown>
 Group Dispenser <bowl>
 Group Dispenser_Chart <bowl>
 Number Dispenser_Chart_Period	"Chart Period"
-Number Arduino_weightFood "Food quantity [%.1f gr]" <bowl> (Dispenser_Chart)
-Number Arduino_weightWater "Water quantity [%.1f gr]" <bowl> (Dispenser_Chart)
-//Number DS18B20_temperature_280004314f8aff "Water temperature [%.1f °C]" <temperature> (Dispenser_Chart) {exec="<[/home/pi/temp.py 28-0004314f8aff:5000:REGEX((.*?))]"}
+Number DS18B20_temperature_280004314f8aff "Water temperature [%.1f °C]" <temperature> (Dispenser_Chart) {exec="<[/home/pi/temp.py 28-0004314f8aff:5000:REGEX((.*?))]"}
+Number Rpisoc_weightFood "Food quantity [%.1f gr]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/scale1.py:5000:REGEX((.*?))]"}
+Number Rpisoc_weightWater "Water quantity [%.1f ml]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/scale2.py:5000:REGEX((.*?))]"}
 
 //Arduino
 String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
@@ -39,9 +45,10 @@ String Arduino_RFID2 "Currently drinking [MAP(rfid.map):%s]"
 String History <chart>
 Switch camera_light "Video lighting" <video>
 
-Number FoodIntakeSpot "Daily food intake [%d %%]" <bowl>
-Number WaterIntakeSpot "Daily water intake [%d %%]" <bowl>
+Number FoodIntakeSpot "Daily food intake [%d gr]" <bowl>
+Number WaterIntakeSpot "Daily water intake [%d ml]" <bowl>
 String HistorySpot "History" <chart>
-Number FoodIntakeTijger "Daily food intake [%d %%]" <bowl>
-Number WaterIntakeTijger "Daily water intake [%d %%]" <bowl>
+Number FoodIntakeTijger "Daily food intake [%d gr]" <bowl>
+Number WaterIntakeTijger "Daily water intake [%d ml]" <bowl>
 String HistoryTijger "History" <chart>
+

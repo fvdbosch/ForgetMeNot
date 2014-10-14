@@ -1,13 +1,5 @@
 import org.openhab.core.library.types.*
 
-//rule "System Start"  
-//when  
-//    System started  
-//then  
-//	var state = EnOcean_switch_00298B1AB.historicState(now,mysql) as OnOffType
-//	EnOcean_switch_00298B1AB.setState(state)
-//end
-
 rule "Master switch"
 when 
 	Item EnOcean_switch_00298B1AA changed
@@ -44,22 +36,6 @@ rule "Arduino"
 	    var int rfid2StartsOn = ArduinoUpdate.indexOf("-B2-RFID2:") + "-B2-RFID2:".length
 	    var String reading2 = ArduinoUpdate.mid(rfid2StartsOn, ArduinoUpdate.indexOf('-E2-')-rfid2StartsOn)
 	    
-	    //if(reading1 == "E3468DF4") {
-	    //	reading1 = "Tijger"
-	    //} else if(reading1 == "737193F4") {
-	    //	reading1 = "Spot"
-	    //} else {
-	    //	reading1 = "-"
-	    //}
-	    
-	    //if(reading2 == "E3468DF4") {
-	    //	reading2 = "Tijger"
-	    //} else if(reading2 == "737193F4") {
-	    //	reading2 = "Spot"
-	    //} else {
-	    //	reading2 = "-"
-	    //}
-	    
 	    Arduino_RFID1.postUpdate(reading1)
 	    Arduino_RFID2.postUpdate(reading2)
 end
@@ -77,8 +53,33 @@ rule "Reset cat intake"
 	when 
 		Time cron "0 0 0 * * ?"
 	then
+		// At midnight, reset water and food intake for both cats
 	    FoodIntakeSpot.postUpdate(0)
 	    WaterIntakeSpot.postUpdate(0)
 	    FoodIntakeTijger.postUpdate(0)
 	    WaterIntakeTijger.postUpdate(0)
+end
+
+rule "Water Dispenser"
+	when 
+		Item Rpisoc_weightWater changed
+	then
+	    var maintenance = EnOcean_switch_00298B1AB.state as OnOffType
+	    var water_level = Rpisoc_weightWater.state as DecimalType
+	    
+	    if(maintenance == "OFF" && water_level < 100) {
+	    	//Refill if less than 100ml in bowl
+	    }
+end
+
+rule "Food Dispenser"
+	when 
+		Item Rpisoc_weightFood changed 
+	then
+	    var maintenance = EnOcean_switch_00298B1AB.state as OnOffType
+	    var food_level = Rpisoc_weightFood.state as DecimalType
+	    
+	    if(maintenance == "OFF" && food_level < 5) {
+	    	//Refill if less than 5gr in bowl
+	    }
 end
