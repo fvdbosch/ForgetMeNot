@@ -1,8 +1,9 @@
 //Group MasterSwitch
 Group Switches <switch>
 
-Group:Contact:OR(OPEN, CLOSED) Contacts "Open windows and doors [(%d)]" <contact> (All)
+Group:Contact:OR(OPEN, CLOSED) Contacts "Open doors [(%d)]" <door> (All)
 Group:Switch:OR(ON, OFF) Sockets "Enabled power sockets [(%d)]" <socket> (All)
+Group:Number:AVG Temperature_Chart "Average temperature [%.1f °C]" <temperature> (All)
 
 // EnOcean Bindings
 Switch EnOcean_switch_00298B1AA "Master switch" <socket> (Switches) {enocean="{id=00:29:8B:1A, eep=F6:02:01, channel=A}"}
@@ -10,7 +11,8 @@ Switch EnOcean_switch_00298B1AB "Maintenance mode" <siren> (Switches) {enocean="
 Switch EnOcean_switch_00294B6FA (Switches) {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=A}"}
 Switch EnOcean_switch_00294B6FB (Switches) {enocean="{id=00:29:4B:6F, eep=F6:02:01, channel=B}"}
 Contact EnOcean_sensor_0180878B "Veranda door [MAP(en.map):%s]" <door> (Contacts) {enocean="{id=01:80:87:8B, eep=D5:00:01, parameter=CONTACT_STATE}"}
-Contact EnOcean_sensor_0180FC58 "Veranda window [MAP(en.map):%s]" <contact> (Contacts) {enocean="{id=01:80:FC:58, eep=D5:00:01, parameter=CONTACT_STATE}"}
+Contact EnOcean_sensor_0180FC58 "Garage door [MAP(en.map):%s]" <garagedoor> (Contacts) {enocean="{id=01:80:FC:58, eep=D5:00:01, parameter=CONTACT_STATE}"}
+Contact EnOcean_sensor_0180AAFA "Front door [MAP(en.map):%s]" <frontdoor> (Contacts) {enocean="{id=01:80:AA:FA, eep=D5:00:01, parameter=CONTACT_STATE}"}
 
 // Exec Bindings
 Switch Elro_socket_C1 "Kitchen" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 1 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 1 0]"}
@@ -19,10 +21,9 @@ Switch Elro_socket_C3 "Office" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home
 Switch Elro_socket_C4 "Bedroom" <socket> (Sockets) {exec=">[ON:/bin/sh@@-c@@/home/pi/rf433.py 67 4 1] >[OFF:/bin/sh@@-c@@/home/pi/rf433.py 67 4 0]"}
 
 // Temperature
-Number Average_temperature "Average room temperature [%.1f °C]" <temperature>
 Number EnOcean_sensor_01809DC1 "Office [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:80:9D:C1, eep=A5:02:05, parameter=TEMPERATURE}"}
 Number EnOcean_sensor_0181A67A "Veranda [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:81:A6:7A, eep=A5:02:05, parameter=TEMPERATURE}"}
-Group Temperature_Chart
+Number EnOcean_sensor_0181B05F "Bedroom [%.1f °C]" <temperature> (Temperature_Chart) {enocean="{id=01:81:B0:5F, eep=A5:02:05, parameter=TEMPERATURE}"}
 Number Temperature_Chart_Period	"Chart Period"
 
 // Cats
@@ -34,21 +35,21 @@ Group Dispenser <bowl>
 Group Dispenser_Chart <bowl>
 Number Dispenser_Chart_Period	"Chart Period"
 Number DS18B20_temperature_280004314f8aff "Water temperature [%.1f °C]" <temperature> (Dispenser_Chart) {exec="<[/home/pi/temp.py 28-0004314f8aff:5000:REGEX((.*?))]"}
-Number Rpisoc_weightFood "Food quantity [%.1f gr]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/scale1.py:5000:REGEX((.*?))]"}
-Number Rpisoc_weightWater "Water quantity [%.1f ml]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/scale2.py:5000:REGEX((.*?))]"}
+Number Rpisoc_weightFood "Food quantity [%.1f gr]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/cats_scale1.py:5000:REGEX((.*?))]"}
+Number Rpisoc_weightWater "Water quantity [%.1f ml]" <bowl> (Dispenser_Chart) {exec="<[/home/pi/psoc_2_pi/API_Python_v_1_1_1/cats_scale2.py:5000:REGEX((.*?))]"}
 
 //Arduino
 String Arduino "Arduino [%s]" (arduino) {serial="/dev/ttyACM0"}
-String Arduino_RFID1 "Currently eating [MAP(rfid.map):%s]"
-String Arduino_RFID2 "Currently drinking [MAP(rfid.map):%s]"
+String Arduino_RFID1 "Currently drinking [MAP(rfid.map):%s]"
+String Arduino_RFID2 "Currently eating [MAP(rfid.map):%s]"
 
 String History <chart>
 Switch camera_light "Video lighting" <video>
 
-Number FoodIntakeSpot "Daily food intake [%d gr]" <bowl>
-Number WaterIntakeSpot "Daily water intake [%d ml]" <bowl>
+Number FoodIntakeSpot "Daily food intake [%d gr]" <bowl> (HistorySpot)
+Number WaterIntakeSpot "Daily water intake [%d ml]" <bowl> (HistorySpot)
 String HistorySpot "History" <chart>
-Number FoodIntakeTijger "Daily food intake [%d gr]" <bowl>
-Number WaterIntakeTijger "Daily water intake [%d ml]" <bowl>
+Number FoodIntakeTijger "Daily food intake [%d gr]" <bowl> (HistoryTijger)
+Number WaterIntakeTijger "Daily water intake [%d ml]" <bowl> (HistoryTijger)
 String HistoryTijger "History" <chart>
 

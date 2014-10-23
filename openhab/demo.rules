@@ -1,4 +1,15 @@
 import org.openhab.core.library.types.*
+import org.openhab.core.persistence.*
+import org.openhab.model.script.actions.*
+
+var Timer front_door_timer = null
+var OnOffType Maintenance = OFF
+var DecimalType beforeDrinkingLevel = null
+var DecimalType afterDrinkingLevel = null
+var String catDrinking = null
+var DecimalType beforeEatingLevel = null
+var DecimalType afterEatingLevel = null
+var String catEating = null
 
 rule "Master switch"
 when 
@@ -12,17 +23,25 @@ then
     Elro_socket_C4.send(state)         
 end
 
-rule "Average temperature"
-when
-	Item EnOcean_sensor_01809DC1 changed or
-	Item EnOcean_sensor_0181A67A changed
+
+rule "Front door"
+when Item EnOcean_sensor_0180AAFA changed
 then
-	var temp1 = EnOcean_sensor_01809DC1.state as DecimalType
-	var temp2 = EnOcean_sensor_0181A67A.state as DecimalType
-	var average_temp = (temp1.floatValue + temp2.floatValue) / 2
-	
-	postUpdate(Average_temperature, average_temp)
+	if(EnOcean_sensor_0180AAFA.state == OPEN) {
+		if(front_door_timer==null) {
+			front_door_timer = createTimer(now.plusMinutes(1)) [|
+ 				pushNotification("abcdefghijklmnopqrstuvwxyz0123456789","Front door", "The front door has been open for 5 minutes! Is it supposed to be?")
+			]
+		}
+	}
+	else if(EnOcean_sensor_0180AAFA.state == CLOSED) {
+		if(front_door_timer!=null) {
+			front_door_timer.cancel
+			front_door_timer = null
+		}
+	}
 end
+
 
 rule "Arduino"
 	when 
@@ -40,14 +59,15 @@ rule "Arduino"
 	    Arduino_RFID2.postUpdate(reading2)
 end
 
+
 rule "Video Light"
 	when 
 		Item camera_light changed
 	then
 	    var state = camera_light.state as OnOffType
-	    
 	    sendCommand (Arduino , "light=" + state)
 end
+
 
 rule "Reset cat intake"
 	when 
@@ -60,26 +80,92 @@ rule "Reset cat intake"
 	    WaterIntakeTijger.postUpdate(0)
 end
 
+
+rule "Maintenance mode"
+	when 
+		Item EnOcean_switch_00298B1AB received update
+	then
+	    Maintenance = EnOcean_switch_00298B1AB.state as OnOffType
+	    println("Maintenance: " + Maintenance)
+end
+
+
 rule "Water Dispenser"
 	when 
-		Item Rpisoc_weightWater changed
+		Item Rpisoc_weightWater received update
 	then
-	    var maintenance = EnOcean_switch_00298B1AB.state as OnOffType
 	    var water_level = Rpisoc_weightWater.state as DecimalType
 	    
-	    if(maintenance == "OFF" && water_level < 100) {
-	    	//Refill if less than 100ml in bowl
+	    if(Maintenance == OFF && water_level < 100) {
+	    	executeCommandLine("/home/pi/psoc_2_pi/API_Python_v_1_1_1/cats_water.py")
 	    }
 end
 
+
 rule "Food Dispenser"
 	when 
-		Item Rpisoc_weightFood changed 
+		Item Rpisoc_weightFood received update 
 	then
-	    var maintenance = EnOcean_switch_00298B1AB.state as OnOffType
 	    var food_level = Rpisoc_weightFood.state as DecimalType
 	    
-	    if(maintenance == "OFF" && food_level < 5) {
-	    	//Refill if less than 5gr in bowl
+	    if(Maintenance == OFF && food_level < 5) {
+	    	executeCommandLine("/home/pi/psoc_2_pi/API_Python_v_1_1_1/cats_food.py")
+	    }
+end
+
+rule "Water Intake"
+	when 
+		Item Arduino_RFID1 changed 
+	then
+	    var drinking = Arduino_RFID1.state.toString()
+	    var water_level = Rpisoc_weightWater.state as DecimalType
+	    
+	    if(drinking == "Spot" || drinking == "Tijger" ) {
+	    	beforeDrinkingLevel = water_level
+	    	catDrinking = drinking
+	    } 
+	    else {
+	    	afterDrinkingLevel = water_level
+	    	if(catDrinking == "Spot"){
+	    		var currentIntake = WaterIntakeSpot.state as DecimalType
+	    		var totalIntake = (beforeDrinkingLevel-afterDrinkingLevel) + currentIntake
+	    		WaterIntakeSpot.postUpdate(totalIntake)
+	    		catDrinking = null
+	    	}
+	    	else if(catDrinking == "Tijger"){
+	    		var currentIntake = WaterIntakeTijger.state as DecimalType
+	    		var totalIntake = (beforeDrinkingLevel-afterDrinkingLevel) + currentIntake
+	    		WaterIntakeTijger.postUpdate(totalIntake)
+	    		catDrinking = null
+	    	}
+	    	
+	    }
+end
+
+rule "Food Intake"
+	when 
+		Item Arduino_RFID2 changed 
+	then
+	    var eating = Arduino_RFID2.state.toString()
+	    var food_level = Rpisoc_weightFood.state as DecimalType
+	    
+	    if(eating == "Spot" || eating == "Tijger" ) {
+	    	beforeEatingLevel = food_level
+	    	catEating = eating
+	    } 
+	    else {
+	    	afterEatingLevel = food_level
+	    	if(catEating == "Spot"){
+	    		var currentIntake = FoodIntakeSpot.state as DecimalType
+	    		var totalIntake = (beforeEatingLevel-afterEatingLevel) + currentIntake
+	    		FoodIntakeSpot.postUpdate(totalIntake)
+	    		catEating = null
+	    	}
+	    	else if(catEating == "Tijger"){
+	    		var currentIntake = FoodIntakeTijger.state as DecimalType
+	    		var totalIntake = (beforeEatingLevel-afterEatingLevel) + currentIntake
+	    		FoodIntakeTijger.postUpdate(totalIntake)
+	    		catEating = null
+	    	}
 	    }
 end
