@@ -64,8 +64,17 @@ rule "Video Light"
 	when 
 		Item camera_light changed
 	then
-	    var state = camera_light.state as OnOffType
-	    sendCommand (Arduino , "light=" + state)
+	    var state = camera_light.state as DecimalType
+	    if(state == 1) {
+	    	sendCommand (Arduino , "light=OFF")
+	    }
+	    else if(state == 2) {
+	    	sendCommand (Arduino , "light=ON")
+	    }
+	    else if(state == 3) {
+	    	sendCommand (Arduino , "light=DISCO")
+	    }
+	    
 end
 
 

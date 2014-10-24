@@ -37,7 +37,7 @@ sitemap demo label="Main Menu"
 				Text item=DS18B20_temperature_280004314f8aff valuecolor=[>25="red",>=10="green",<10="red"]
 				Text item=Arduino_RFID2
 				Text item=Arduino_RFID1
-				Switch item=camera_light
+				Selection item=camera_light mappings=[1="Off", 2="On", 3="Disco"]
 				Video url="http://localhost:8081" encoding="mjpeg"
 				Text item=History {
 					Frame {
